@@ -7,8 +7,8 @@ Moment-Generating Function
 The [moment-generating function](https://en.wikipedia.org/wiki/Moment-generating_function) for a [Rayleigh](https://en.wikipedia.org/wiki/Rayleigh_distribution) random variable is
 
 <div class="equation" align="center" data-raw-text="
-    M_X(t) := \mathbb{E}\!\left[e^{tX}\right]" data-equation="eq:mgf_function">
-	<img src="" alt="Moment-generating function (MGF) for a Rayleigh distribution.">
+	M_X(t) := \mathbb{E}\!\left[e^{tX}\right] = 1+\sigma t\,e^{\sigma^2t^2/2}\sqrt{\frac{\pi}{2}} \left(\textrm{erf}\left(\frac{\sigma t}{\sqrt{2}}\right)\!+\!1\right)" data-equation="eq:mgf_function">
+	<img src="https://cdn.rawgit.com/distributions-io/rayleigh-mgf/ea6843cf85fe7247458d697b035c5abab0e83016/docs/img/eqn.svg" alt="Moment-generating function (MGF) for a Rayleigh distribution.">
 	<br>
 </div>
 
@@ -41,18 +41,18 @@ var matrix = require( 'dstructs-matrix' ),
 	i;
 
 out = mgf( 1 );
-// returns
+// returns ~4.477
 
 out = mgf( -1 );
-// returns 0
+// returns ~0.344
 
 t = [ 0, 0.5, 1, 1.5, 2, 2.5 ];
 out = mgf( t );
-// returns [...]
+// returns [ 1, ~1.982, ~4.477, ~11.808, ~37.2, ~142.741 ]
 
 t = new Int8Array( t );
 out = mgf( t );
-// returns Float64Array( [...] )
+// returns Float64Array( [1,1,~4.477,~4.477,~37.2,~37.2] )
 
 t = new Float32Array( 6 );
 for ( i = 0; i < 6; i++ ) {
@@ -67,9 +67,9 @@ mat = matrix( t, [3,2], 'float32' );
 
 out = mgf( mat );
 /*
-	[
-
-	   ]
+	[  1	  ~1.982
+	  ~4.477 ~11.808
+	  ~37.2  ~142.741 ]
 */
 ```
 
@@ -90,7 +90,7 @@ var t = [ 0, 0.5, 1, 1.5, 2, 2.5 ];
 var out = mgf( t, {
 	'sigma': 3
 });
-// returns [...]
+// returns [ 1, ~11.808, ~677.005, ~291536.135, ~987510810.932, ~30809418473202.457]
 ```
 
 For non-numeric `arrays`, provide an accessor `function` for accessing `array` values.
@@ -112,7 +112,7 @@ function getValue( d, i ) {
 var out = mgf( data, {
 	'accessor': getValue
 });
-// returns [...]
+// returns [ 1, ~1.982, ~4.477, ~11.808, ~37.2, ~142.741 ]
 ```
 
 
@@ -134,12 +134,12 @@ var out = mgf( data, {
 });
 /*
 	[
-		{'x':[0,]},
-		{'x':[1,]},
-		{'x':[2,]},
-		{'x':[3,]},
-		{'x':[4,]},
-		{'x':[5,]}
+		{'x':[0,1]},
+		{'x':[1,~1.982]},
+		{'x':[2,~4.477]},
+		{'x':[3,~11.808]},
+		{'x':[4,~37.2]},
+		{'x':[5,~142.741]}
 	]
 */
 
@@ -157,13 +157,13 @@ t = new Int8Array( [0,1,2,3,4] );
 out = mgf( t, {
 	'dtype': 'int32'
 });
-// returns Int32Array( [...] )
+// returns Int32Array( [1,4,37,677,29888] )
 
 // Works for plain arrays, as well...
-out = mgf( [0,0.5,1,1.5,2], {
-	'dtype': 'uint8'
+out = mgf( [0,1,2,3,4], {
+	'dtype': 'uint32'
 });
-// returns Uint8Array( [...] )
+// returns Uint32Array( [1,4,37,677,29888] )
 ```
 
 By default, the function returns a new data structure. To mutate the input data structure (e.g., when input values can be discarded or when optimizing memory usage), set the `copy` option to `false`.
@@ -175,12 +175,12 @@ var bool,
 	t,
 	i;
 
-t = [ 0, 0.5, 1, 1.5, 2 ];
+t = [ 0, 0.5, 1, 1.5, 2, 2.5 ];
 
 out = mgf( t, {
 	'copy': false
 });
-// returns [...]
+// returns [ 1, ~1.982, ~4.477, ~11.808, ~37.2, ~142.741 ]
 
 bool = ( t === out );
 // returns true
@@ -200,9 +200,9 @@ out = mgf( mat, {
 	'copy': false
 });
 /*
-	[
-
-	   ]
+	[  1	  ~1.982
+	  ~4.477 ~11.808
+	  ~37.2  ~142.741 ]
 */
 
 bool = ( mat === out );
